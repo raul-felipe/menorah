@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menorah App</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <!-- update the version number as needed -->
+    <!--<script defer src="/__/firebase/5.5.7/firebase-app.js"></script>
+    &lt;!&ndash; include only the Firebase features as you need &ndash;&gt;
+    <script defer src="/__/firebase/5.5.7/firebase-auth.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-database.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-storage.js"></script>
+    &lt;!&ndash; initialize the SDK after all desired features are loaded &ndash;&gt;
+    <script defer src="/__/firebase/init.js"></script>-->
+
+
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+
+</head>
+<body>
+<div id="message">
+
+    <h2>Olá</h2>
+    <h1>Esse é o site para mandar mensagens para o app Menorah!!!</h1>
+    <div>
+
+        <input id="titulo" class="form-control" placeholder="Titulo (opcional)">
+        <input id="mensagem" class="form-control" placeholder="Mensagem">
+        <label>tipo de usuário: </label>
+        <select id="usuario">
+            <option value="comum">comum</option>
+            <option value="membro">membro</option>
+            <option value="lider">lider</option>
+        </select>
+        <button id="btn" type="submit" class="btn btn-default">Enviar</button>
+    </div>
+
+
+</div>
+
+<script>
+    var config = {
+        apiKey: "AIzaSyCxHMWJ_J1MCU6JLQeNnctaxfDyO9jLkHs",
+        authDomain: "batistamenorah-88af8.firebaseapp.com",
+        databaseURL: "https://batistamenorah-88af8.firebaseio.com/",
+        storageBucket: "batistamenorah-88af8.appspot.com"
+    };
+    firebase.initializeApp(config);
+
+    $(document).ready(function(){
+        $('#btn').click(function(){
+            var titulo = $('#titulo').val();
+            var mensagem = $('#mensagem').val();
+            var usuario = $('#usuario').val();
+
+            firebase.database().ref('/mensagem').update({
+                check: false
+            }, function(error){
+                if(error){
+
+                }else {
+                    firebase.database().ref('/mensagem').update({
+                        conteudo: mensagem,
+                        titulo: titulo,
+                        usuario: usuario
+                    }, function(error) {
+                        if (error) {
+                            // The write failed...
+                        } else {
+                            // Data saved successfully!
+                            firebase.database().ref('/mensagem').update({
+                                check: true
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+<!--<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+
+        try {
+            let app = firebase.app();
+            let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
+            document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+            console.error(e);
+            document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
+        }
+    });
+</script>-->
+</body>
+</html>
