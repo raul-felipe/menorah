@@ -20,28 +20,76 @@
 
     <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
 
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/scrolling-nav.css" rel="stylesheet">
 
 </head>
 <body>
-<div id="message">
 
-    <h2>Olá</h2>
-    <h1>Esse é o site para mandar mensagens para o app Menorah!!!</h1>
-    <div>
-
-        <input id="titulo" class="form-control" placeholder="Titulo (opcional)">
-        <input id="mensagem" class="form-control" placeholder="Mensagem">
-        <label>tipo de usuário: </label>
-        <select id="usuario">
-            <option value="comum">comum</option>
-            <option value="membro">membro</option>
-            <option value="lider">lider</option>
-        </select>
-        <button id="btn" type="submit" class="btn btn-default">Enviar</button>
-    </div>
-
+<!--Navigation bar-->
+<div id="nav-placeholder">
 
 </div>
+<div id="message">
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#nav-placeholder").load("nav.html");
+        });
+    </script>
+
+    <header class="bg-primary text-white">
+        <div class="container text-center">
+            <h1>Administrador do app Menorah</h1>
+        </div>
+    </header>
+
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h3>Preencha os campos para mandar sua notificação.</h3>
+                    <input id="titulo" class="form-control" placeholder="Titulo (opcional)">
+                    <textarea id="mensagem" class="mt-2 form-control" rows="5" placeholder="Mensagem"></textarea>
+                    <label class="mt-2 mr-2">Mandar para usuário: </label>
+                    <select class="form-control" id="usuario">
+                        <option value="comum">comum</option>
+                        <option value="membro">membro</option>
+                        <option value="lider">lider</option>
+                    </select>
+                    <button id="btn" data-toggle="modal" data-target="#myModal" class="mt-2 btn btn-default">Enviar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body" id="confirma-conteudo">
+
+            </div>
+            <div class="modal-footer">
+                <button id="mandar-mensagem" type="button" class="btn btn-default" data-dismiss="modal">Confirmar
+                </button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
 
 <script>
     var config = {
@@ -52,29 +100,40 @@
     };
     firebase.initializeApp(config);
 
-    $(document).ready(function(){
-        $('#btn').click(function(){
+    $(document).ready(function () {
+        $('#btn').click(function () {
             var titulo = $('#titulo').val();
             var mensagem = $('#mensagem').val();
             var usuario = $('#usuario').val();
+            $("#confirma-conteudo").append("<label>Você está prestes a mandar a mensagem: <br/>'<b>" + mensagem + "</b>'<br/>Para usuários do tipo <b>" +usuario+"</b></label>");
+        });
 
+        $("#mandar-mensagem").click(function () {
+            var titulo = $('#titulo').val();
+            var mensagem = $('#mensagem').val();
+            var usuario = $('#usuario').val();
             firebase.database().ref('/mensagem').update({
                 check: false
-            }, function(error){
-                if(error){
+            }, function (error) {
+                if (error) {
 
-                }else {
+                } else {
                     firebase.database().ref('/mensagem').update({
                         conteudo: mensagem,
                         titulo: titulo,
                         usuario: usuario
-                    }, function(error) {
+                    }, function (error) {
                         if (error) {
                             // The write failed...
                         } else {
                             // Data saved successfully!
                             firebase.database().ref('/mensagem').update({
                                 check: true
+                            }, function (error) {
+                                if(error){
+                                }else{
+                                    alert("Mensagem enviada!");
+                                }
                             });
                         }
                     });
@@ -83,28 +142,12 @@
         });
     });
 </script>
+<!-- Bootstrap core JavaScript -->
+<script src="vendor/jquery/jquery.min.js"></script>
+<script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
-<!--<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+<!-- Plugin JavaScript -->
+<script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
-        try {
-            let app = firebase.app();
-            let features = ['auth', 'database', 'messaging', 'storage'].filter(feature => typeof app[feature] === 'function');
-            document.getElementById('load').innerHTML = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-            console.error(e);
-            document.getElementById('load').innerHTML = 'Error loading the Firebase SDK, check the console.';
-        }
-    });
-</script>-->
 </body>
 </html>

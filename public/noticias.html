@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menorah App</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- update the version number as needed -->
+    <!--<script defer src="/__/firebase/5.5.7/firebase-app.js"></script>
+    &lt;!&ndash; include only the Firebase features as you need &ndash;&gt;
+    <script defer src="/__/firebase/5.5.7/firebase-auth.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-database.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-messaging.js"></script>
+    <script defer src="/__/firebase/5.5.7/firebase-storage.js"></script>
+    &lt;!&ndash; initialize the SDK after all desired features are loaded &ndash;&gt;
+    <script defer src="/__/firebase/init.js"></script>-->
+
+
+    <script src="https://www.gstatic.com/firebasejs/3.3.0/firebase.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/scrolling-nav.css" rel="stylesheet">
+
+</head>
+<body>
+
+<!--Navigation bar-->
+<div id="nav-placeholder">
+
+</div>
+<div id="message">
+
+    <script src="//code.jquery.com/jquery.min.js"></script>
+    <script>
+        $(function () {
+            $("#nav-placeholder").load("nav.html");
+        });
+    </script>
+
+    <header class="bg-primary text-white">
+        <div class="container text-center">
+            <h1>Administrador do app Menorah</h1>
+        </div>
+    </header>
+
+    <section>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+
+                    <input id="titulo-noticia" class="form-control" placeholder="Título">
+                    <textarea id="conteudo" class="mt-2 form-control" rows="5" placeholder="Conteudo"></textarea>
+                    <button id="adicionar" class="btn mt-2">Adicionar</button>
+                    <h3 class="my-3">Notícias:</h3>
+                    <ul id="lista-noticias" class="list-group">
+
+                    </ul>
+                    <button id="salvar" class="btn mt-2">Atualizar</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+    var config = {
+        apiKey: "AIzaSyCxHMWJ_J1MCU6JLQeNnctaxfDyO9jLkHs",
+        authDomain: "batistamenorah-88af8.firebaseapp.com",
+        databaseURL: "https://batistamenorah-88af8.firebaseio.com/",
+        storageBucket: "batistamenorah-88af8.appspot.com"
+    };
+    firebase.initializeApp(config);
+
+    $(document).ready(function () {
+
+        firebase.database().ref('/noticias').once('value').then(function(snapshot) {
+            snapshot.forEach(function(childSnapshot) {
+                $("#lista-noticias").append("<li class='list-group-item d-flex justify-content-between align-items-center'><div class='mr-5'><h5>"+childSnapshot.child("titulo").val()+"</h5><label>"+childSnapshot.child("conteudo").val()+"</label></div><button class='btn fa fa-trash'></button></li>");
+            });
+        });
+
+        $("#lista-noticias").sortable();
+        $("#lista-noticias").disableSelection();
+
+        $("#salvar").click(function () {
+            var itens = [];
+            $('#lista-noticias').find('li').map(function() {
+                itens.push({
+                    "titulo": $(this).find('h5').text(),
+                    "conteudo": $(this).find('label').text()
+                });
+            });
+            console.log(itens);
+            firebase.database().ref('noticias').set(itens);
+
+        });
+
+        $("ul").on("click", "button", function(e) {
+            e.preventDefault();
+            $(this).parent().remove();
+        });
+
+        $("#adicionar").click(function () {
+            var titulo = $("#titulo-noticia").val();
+            var conteudo = $("#conteudo").val();
+
+            $("#lista-noticias").append("<li class='list-group-item d-flex justify-content-between align-items-center'><div class='mr-5'><h5>"+titulo+"</h5><label>"+conteudo+"</label></div><button class='btn fa fa-trash'></button></li>");
+        });
+
+    });
+</script>
+</body>
+</html>
